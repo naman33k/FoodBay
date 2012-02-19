@@ -17,11 +17,21 @@ class User extends AppModel {
  * @var string
  */
 	public $displayField = 'name';
+
+
+	public function beforeSave() {
+		if (isset($this->data[$this->alias]['password'])) {
+			$this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['password']);
+		}
+		return true;
+	}
+	
 /**
  * Validation rules
  *
  * @var array
  */
+
 	public $validate = array(
 		'name' => array(
 			'notempty' => array(

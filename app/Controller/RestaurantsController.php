@@ -99,4 +99,20 @@ class RestaurantsController extends AppController {
 		$this->Session->setFlash(__('Restaurant was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
+	
+	public function makeorder($id = null){
+		$this->Restaurant->id = $id;
+		if (!$this->Restaurant->exists()) {
+			throw new NotFoundException(__('Invalid restaurant'));
+		}
+		$this->Restaurant->Behaviors->load('Containable');
+		// Fetch Menus
+		// I am kind of assuming that there is only one active menu per restaurant
+		// Will put this check using an active field in the menu
+		
+		$bigArray = $this->Restaurant->find('all', array('conditions'=>array('Restaurant.id'=>$id),'contain' => array('Menu' => array('MenuSection'=>array('Dish'=>array('TimeInterval','DishRating'))))));
+		$this->set('restaurant',$bigArray);
+		
+		
+	}
 }
